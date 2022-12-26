@@ -1,0 +1,101 @@
+{% extends "tasks/pages/template.html" %}
+
+
+{% block content %}
+
+<div class="card card-plain mb-4">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="d-flex flex-column h-100">
+                    <h2 class="font-weight-bolder mb-0">{{ project.title }}</h2>
+                  </div>
+
+                  {% if user == project.author %}
+                    {% include 'tasks/pages/partials/project_status_select.html' %}
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize ps-3">Projects tasks</h6>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center justify-content-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Started</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Priority</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Deadline</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Assignment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if user in project.members.all %}
+                    {% for task in project.project_tasks.all %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2">
+                          <div class="my-auto">
+                            <a href="{% url 'project' project.id %}">
+                              <h6 class="mb-0 text-sm">{{ task.title }}</h6>
+                            </a>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ task.timestamp.date }}</p>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ task.get_priority_display }}</p>
+                      </td>
+                      <td>
+                        <span class="text-sm font-weight-bold mb-0">
+                          {% include 'tasks/pages/partials/task_status_select.html' %}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="text-sm font-weight-bold">{{ task.deadline }}</span>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ task.assignment }}</p>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+    </div>
+</div>
+
+  <h1>Update Band</h1>
+
+  <form action="{% url 'project_assignment' project.id %}" method="post">
+    {% csrf_token %}
+    {{ assignment_form.as_p }}
+    <input type="submit" value="Submit">
+ </form>
+
+
+
+<script>
+</script>
+
+
+
+{% endblock %}

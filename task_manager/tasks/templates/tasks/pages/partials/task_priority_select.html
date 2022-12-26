@@ -1,0 +1,13 @@
+<select onchange='task_put_status({{ task.id }}, this.value)'>
+    {% if task.status == 'OH' %}
+    <option value="L" selected>Wstrzymane</option>
+    {% else %}
+    <option value="L" >Wstrzymane</option>
+    {% endif %}
+
+    {% if task.status == 'NS' %}
+    <option value="H" selected>Nie rozpoczęte</option>
+    {% else %}
+    <option value="H">Nie rozpoczęte</option>
+    {% endif %}
+</select>

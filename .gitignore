@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Other
+task_manager/tasks/material-dashboard-master/*
+.idea
+.DS_Store
+
