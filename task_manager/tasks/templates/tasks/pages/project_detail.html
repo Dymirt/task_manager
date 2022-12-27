@@ -49,9 +49,7 @@
                       <td>
                         <div class="d-flex px-2">
                           <div class="my-auto">
-                            <a href="{% url 'project' project.id %}">
                               <h6 class="mb-0 text-sm">{{ task.title }}</h6>
-                            </a>
                           </div>
                         </div>
                       </td>
@@ -70,7 +68,24 @@
                         <span class="text-sm font-weight-bold">{{ task.deadline }}</span>
                       </td>
                       <td>
+                        {% if project.author == user %}
+                          <select onchange='task_put_status({{ task.id }}, this.value)'>
+                            {% if not task.assignment %}
+                            <option value="None" selected>None</option>
+                            {% else %}
+                            <option value="None" >None</option>
+                            {% endif %}
+                            {% for member in project.members.all %}
+                                {% if task.assignment == member %}
+                                <option value="{{ member }}" selected>{{ member }}</option>
+                                {% else %}
+                                <option value="{{ member }}" >{{ member }}</option>
+                                {% endif %}
+                            {% endfor %}
+                          </select>
+                        {% else %}
                         <p class="text-sm font-weight-bold mb-0">{{ task.assignment }}</p>
+                        {% endif %}
                       </td>
                     </tr>
                     {% endfor %}
@@ -82,20 +97,4 @@
           </div>
     </div>
 </div>
-
-  <h1>Update Band</h1>
-
-  <form action="{% url 'project_assignment' project.id %}" method="post">
-    {% csrf_token %}
-    {{ assignment_form.as_p }}
-    <input type="submit" value="Submit">
- </form>
-
-
-
-<script>
-</script>
-
-
-
 {% endblock %}

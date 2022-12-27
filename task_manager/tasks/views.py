@@ -147,6 +147,10 @@ def project_assignment(request, project_id):
             # redirect to the detail page of the `Band` we just updated
             return redirect('project', project_id)
 
+#################
+# Project PUT views
+#################
+
 
 def project_put_status(request, project_id):
     project = Project.objects.get(pk=project_id)
@@ -165,12 +169,29 @@ def project_put_priority(request, project_id):
         project.save()
         return HttpResponse(status=204)
 
+#################
+# Tasks PUT views
+#################
+
 
 def task_put_status(request, task_id):
     task = Task.objects.get(pk=task_id)
     if request.method == "PUT":
         data = json.loads(request.body)
         task.status = data["status"]
+        task.save()
+        return HttpResponse(status=204)
+
+
+def task_put_assignment(request, task_id):
+    task = Task.objects.get(pk=task_id)
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data["assignment"] != 'None':
+            member = User.objects.get_by_natural_key(data["assignment"])
+            task.assignment = member
+        else:
+            task.assignment = None
         task.save()
         return HttpResponse(status=204)
 
