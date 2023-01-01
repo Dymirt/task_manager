@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
@@ -124,17 +124,14 @@ class ProjectsListView(ListView):
 
 def project_detail_view(request, project_id):
     project = Project.objects.get(pk=project_id)
-    assignment_form = ProjectAssignmentForm(instance=project)
-    status_form = ProjectStatusForm(instance=project)
 
-    context = {'project': project,
-               'assignment_form': assignment_form,
-               'status_form': status_form,
-               'status_choices': STATUS_CHOICES,
-               'priority_choices': PRIORITY_CHOICES,
-               }
+    if request.user in project.organization.users.all():
+        context = {'project': project,
+                   'status_choices': STATUS_CHOICES,
+                   'priority_choices': PRIORITY_CHOICES,
+                   }
+        return render(request, "tasks/pages/project_detail.html", context=context)
 
-    return render(request, "tasks/pages/project_detail.html", context=context)
 
 #################
 # Project PUT views
@@ -143,33 +140,36 @@ def project_detail_view(request, project_id):
 
 def project_put_status(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        project.status = data["status"]
-        project.save()
-        return HttpResponse(status=204)
+    if request.user == project.author:
+        if request.method == "PUT":
+            data = json.loads(request.body)
+            project.status = data["status"]
+            project.save()
+            return HttpResponse(status=204)
 
 
 def project_put_priority(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        project.priority = data["priority"]
-        project.save()
-        return HttpResponse(status=204)
+    if request.user == project.author:
+        if request.method == "PUT":
+            data = json.loads(request.body)
+            project.priority = data["priority"]
+            project.save()
+            return HttpResponse(status=204)
 
 
 def project_put_member(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        member = User.objects.get_by_natural_key(data["member"])
-        if member in project.members.all():
-            project.members.remove(member)
-        else:
-            project.members.add(member)
+    if request.user == project.author:
+        if request.method == "PUT":
+            data = json.loads(request.body)
+            member = User.objects.get_by_natural_key(data["member"])
+            if member in project.members.all():
+                project.members.remove(member)
+            else:
+                project.members.add(member)
 
-        return HttpResponse(status=204)
+            return HttpResponse(status=204)
 
 #################
 # Tasks PUT views
@@ -181,6 +181,15 @@ def task_put_status(request, task_id):
     if request.method == "PUT":
         data = json.loads(request.body)
         task.status = data["status"]
+        task.save()
+        return HttpResponse(status=204)
+
+
+def task_put_priority(request, task_id):
+    task = Task.objects.get(pk=task_id)
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        task.priority = data["priority"]
         task.save()
         return HttpResponse(status=204)
 

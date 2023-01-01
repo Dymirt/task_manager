@@ -1,13 +1,11 @@
-<select onchange='task_put_status({{ task.id }}, this.value)'>
-    {% if task.status == 'OH' %}
-    <option value="L" selected>Wstrzymane</option>
-    {% else %}
-    <option value="L">Wstrzymane</option>
-    {% endif %}
+<select onchange='task_put_priority({{ task.id }}, this.value)'>
 
-    {% if task.status == 'NS' %}
-    <option value="H" selected>Nie rozpoczęte</option>
-    {% else %}
-    <option value="H">Nie rozpoczęte</option>
-    {% endif %}
+    {% for value, priority in priority_choices %}
+        {% if task.priority == value %}
+            <option value="{{ value }}" selected>{{ priority }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ priority }}</option>
+        {% endif %}
+    {% endfor %}
+
 </select>

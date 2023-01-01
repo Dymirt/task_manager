@@ -38,7 +38,15 @@ function task_put_status(task_id, state){
     })
 }
 
-function task_put_status(task_id, member){
+function task_put_priority(task_id, state){
+    fetch(`/task/${task_id}/priority/put`, {
+      method: 'PUT',
+      body: JSON.stringify({priority: state}),
+      headers: { "X-CSRFToken": getCookie('csrftoken') }
+    })
+}
+
+function task_put_assignment(task_id, member){
     fetch(`/task/${task_id}/assignment/put`, {
       method: 'PUT',
       body: JSON.stringify({assignment: member}),
