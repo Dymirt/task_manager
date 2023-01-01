@@ -1,12 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView
 
 from .models import User, Project, Task, STATUS_CHOICES, PRIORITY_CHOICES
 from django.db import IntegrityError
-from .forms import ProjectAssignmentForm, ProjectStatusForm
 import json
 
 
@@ -108,20 +106,20 @@ def typography_view(request):
     return render(request, "tasks/pages/typography.html")
 
 
-class ProjectsListView(ListView):
-    template_name = "tasks/pages/projects.html"
-    model = Project
+@login_required
+def projects_view(request):
+    try:
+        projects = request.user.organization.projects.all()
+    except AttributeError as e:
+        projects = []
+    context = {'projects': projects,
+               'status_choices': STATUS_CHOICES,
+               'priority_choices': PRIORITY_CHOICES,
+               }
+    return render(request, "tasks/pages/projects.html", context=context)
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        project_status_form = ProjectStatusForm()
-        context['priority_choices'] = PRIORITY_CHOICES
-        context['status_choices'] = STATUS_CHOICES
 
-        return context
-
-
+@login_required
 def project_detail_view(request, project_id):
     project = Project.objects.get(pk=project_id)
 
@@ -137,7 +135,7 @@ def project_detail_view(request, project_id):
 # Project PUT views
 #################
 
-
+@login_required
 def project_put_status(request, project_id):
     project = Project.objects.get(pk=project_id)
     if request.user == project.author:
@@ -148,6 +146,7 @@ def project_put_status(request, project_id):
             return HttpResponse(status=204)
 
 
+@login_required
 def project_put_priority(request, project_id):
     project = Project.objects.get(pk=project_id)
     if request.user == project.author:
@@ -158,6 +157,7 @@ def project_put_priority(request, project_id):
             return HttpResponse(status=204)
 
 
+@login_required
 def project_put_member(request, project_id):
     project = Project.objects.get(pk=project_id)
     if request.user == project.author:
@@ -176,6 +176,7 @@ def project_put_member(request, project_id):
 #################
 
 
+@login_required
 def task_put_status(request, task_id):
     task = Task.objects.get(pk=task_id)
     if request.method == "PUT":
@@ -185,6 +186,7 @@ def task_put_status(request, task_id):
         return HttpResponse(status=204)
 
 
+@login_required
 def task_put_priority(request, task_id):
     task = Task.objects.get(pk=task_id)
     if request.method == "PUT":
@@ -194,6 +196,7 @@ def task_put_priority(request, task_id):
         return HttpResponse(status=204)
 
 
+@login_required
 def task_put_assignment(request, task_id):
     task = Task.objects.get(pk=task_id)
     if request.method == "PUT":

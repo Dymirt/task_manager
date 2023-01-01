@@ -28,8 +28,7 @@
             </thead>
             <tbody>
 
-              {% for project in object_list %}
-              {% if project.organization == user.organization %}
+              {% for project in projects %}
               <tr>
                 <td>
                   <div class="d-flex px-2">
@@ -90,7 +89,6 @@
                 {% endif %}
 
               </tr>
-              {% endif %}
               {% endfor %}
             </tbody>
           </table>
