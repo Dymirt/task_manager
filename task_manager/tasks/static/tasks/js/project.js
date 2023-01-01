@@ -45,3 +45,11 @@ function task_put_status(task_id, member){
       headers: { "X-CSRFToken": getCookie('csrftoken') }
     })
 }
+
+function handleChange(project_id, user) {
+     fetch(`/project/${project_id}/member/put`, {
+      method: 'PUT',
+      body: JSON.stringify({member: user}),
+      headers: { "X-CSRFToken": getCookie('csrftoken') }
+    })
+}

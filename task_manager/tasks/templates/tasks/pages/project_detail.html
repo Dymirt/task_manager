@@ -22,8 +22,17 @@
   <div class="col-12">
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-          <h6 class="text-white text-capitalize ps-3">Projects tasks</h6>
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-3 p-0">
+          <div class='row'>
+            <div class="col-6 d-flex align-items-center">
+              <h6 class="text-white text-capitalize ps-3">Projects tasks</h6>
+            </div>
+            <div class="col-6 text-end">
+              <a class="btn bg-gradient-dark" href="javascript:;">
+                <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New task</a>
+            </div>
+
+          </div>
         </div>
       </div>
       <div class="card-body px-0 pb-2">
@@ -40,7 +49,6 @@
               </tr>
             </thead>
             <tbody>
-              {% if user in project.members.all %}
               {% for task in project.project_tasks.all %}
               <tr>
                 <td>
@@ -58,7 +66,11 @@
                 </td>
                 <td>
                   <span class="text-sm font-weight-bold mb-0">
+                    {% if user == task.assignment %}
                     {% include 'tasks/pages/partials/task_status_select.html' %}
+                    {% else %}
+                    {{ task.get_status_display }}
+                    {% endif %}
                   </span>
                 </td>
                 <td>
@@ -86,10 +98,58 @@
                 </td>
               </tr>
               {% endfor %}
-              {% endif %}
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-3">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+          <h6 class="text-white text-capitalize ps-3">Members</h6>
+        </div>
+      </div>
+      <ul class="card-body p-3">
+        <ul class="list-group">
+          {% if user == project.author %}
+              {% for organization_member in project.organization.users.all %}
+              <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2 pt-0">
+                <div class="avatar me-3">
+                  <img src="../assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
+                </div>
+                <div class="d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="mb-0 text-sm">{{ organization_member }}</h6>
+                  <p class="mb-0 text-xs">Hi! I need more information..</p>
+                </div>
+
+                  <div class='form-check form-switch ps-0'>
+                  {% if organization_member in project.members.all  %}
+                  <input class="form-check-input ms-auto" type="checkbox" onchange="handleChange({{ project.id }}, this.value )" value="{{ organization_member }}" name="{{ organization_member }}" checked>
+                  {% else %}
+                  <input class="form-check-input ms-auto" type="checkbox" onchange="handleChange({{ project.id }}, this.value )" value="{{ organization_member }}" name="{{ organization_member }}">
+                  {% endif %}
+                  </div>
+              </li>
+              {% endfor %}
+          {% else %}
+          {% for project_member in project.members.all %}
+              <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2 pt-0">
+                <div class="avatar me-3">
+                  <img src="../assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
+                </div>
+                <div class="d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="mb-0 text-sm">{{ project_member }}</h6>
+                  <p class="mb-0 text-xs">Hi! I need more information..</p>
+                </div>
+              </li>
+          {% endfor %}
+          {% endif %}
+        </ul>
       </div>
     </div>
   </div>

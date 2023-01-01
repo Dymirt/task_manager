@@ -16,11 +16,11 @@ urlpatterns = [
     path('typography/', views.typography_view, name='typography'),
     path('virtual/', views.virtual_view, name='virtual'),
     path('projects/', views.ProjectsListView.as_view(), name='projects'),
-    path("project/<int:project_id>", views.project_view, name="project"),
-    path('project/<int:project_id>/assignment/', views.project_assignment, name="project_assignment"),
+    path("project/<int:project_id>", views.project_detail_view, name="project"),
     # Project PUT
     path('project/<int:project_id>/status/put', views.project_put_status),
     path('project/<int:project_id>/priority/put', views.project_put_priority),
+    path('project/<int:project_id>/member/put', views.project_put_member),
     # Tasks PUT
     path('task/<int:task_id>/status/put', views.task_put_status),
     path('task/<int:task_id>/assignment/put', views.task_put_assignment),

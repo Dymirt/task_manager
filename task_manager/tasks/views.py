@@ -122,7 +122,7 @@ class ProjectsListView(ListView):
         return context
 
 
-def project_view(request, project_id):
+def project_detail_view(request, project_id):
     project = Project.objects.get(pk=project_id)
     assignment_form = ProjectAssignmentForm(instance=project)
     status_form = ProjectStatusForm(instance=project)
@@ -135,17 +135,6 @@ def project_view(request, project_id):
                }
 
     return render(request, "tasks/pages/project_detail.html", context=context)
-
-
-def project_assignment(request, project_id):
-    if request.method == "POST":
-        project = Project.objects.get(pk=project_id)
-        form = ProjectAssignmentForm(request.POST, instance=project)
-        if form.is_valid():
-            # update the existing `Band` in the database
-            form.save()
-            # redirect to the detail page of the `Band` we just updated
-            return redirect('project', project_id)
 
 #################
 # Project PUT views
@@ -167,6 +156,19 @@ def project_put_priority(request, project_id):
         data = json.loads(request.body)
         project.priority = data["priority"]
         project.save()
+        return HttpResponse(status=204)
+
+
+def project_put_member(request, project_id):
+    project = Project.objects.get(pk=project_id)
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        member = User.objects.get_by_natural_key(data["member"])
+        if member in project.members.all():
+            project.members.remove(member)
+        else:
+            project.members.add(member)
+
         return HttpResponse(status=204)
 
 #################

@@ -22,7 +22,7 @@ PRIORITY_CHOICES = [
 
 
 class User(AbstractUser):
-    pass
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE, related_name="users", null=True, blank=True)
 
 
 class Project(models.Model):
@@ -32,8 +32,9 @@ class Project(models.Model):
     deadline = models.DateField(null=True, blank=True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=LOW)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED)
-    members = models.ManyToManyField('User', related_name="project_members", null=True, blank=True)
+    members = models.ManyToManyField('User', related_name="project_members", blank=True)
     author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="project_authored")
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE, related_name="projects", null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -50,7 +51,7 @@ class Task(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=LOW)
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="project_tasks")
-    assignment = models.ForeignKey('User', on_delete=models.CASCADE, related_name="tasks_assignments", null=True, blank=True)
+    assignment = models.ForeignKey('User', on_delete=models.CASCADE, related_name="tasks_assignments", blank=True, null=True)
     author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="tasks_authored")
 
     def __str__(self):
@@ -63,5 +64,13 @@ class DayTask(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=LOW)
     parent = models.ForeignKey('DayTask', on_delete=models.CASCADE, related_name="childs",  null=True, blank=True)
+
+
+class Organization(models.Model):
+    title = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.title
+
 
 
