@@ -8,7 +8,6 @@ from django.db import IntegrityError
 import json
 
 
-
 # Create your views here.
 from django.urls import reverse
 
@@ -26,9 +25,11 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "tasks/pages/sign-in.html", {
-                "message": "Invalid username and/or password."
-            })
+            return render(
+                request,
+                "tasks/pages/sign-in.html",
+                {"message": "Invalid username and/or password."},
+            )
     else:
         return render(request, "tasks/pages/sign-in.html")
 
@@ -48,18 +49,20 @@ def register_view(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            return render(request, "network/register.html", {
-                "message": "Passwords must match."
-            })
+            return render(
+                request, "network/register.html", {"message": "Passwords must match."}
+            )
 
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-            return render(request, "tasks/pages/sign-up.html", {
-                "message": "Username already taken."
-            })
+            return render(
+                request,
+                "tasks/pages/sign-up.html",
+                {"message": "Username already taken."},
+            )
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
@@ -68,6 +71,7 @@ def register_view(request):
 
 def index(request):
     return render(request, "tasks/index.html")
+
 
 @login_required
 def profile_view(request):
@@ -112,10 +116,11 @@ def projects_view(request):
         projects = request.user.organization.projects.all()
     except AttributeError as e:
         projects = []
-    context = {'projects': projects,
-               'status_choices': STATUS_CHOICES,
-               'priority_choices': PRIORITY_CHOICES,
-               }
+    context = {
+        "projects": projects,
+        "status_choices": STATUS_CHOICES,
+        "priority_choices": PRIORITY_CHOICES,
+    }
     return render(request, "tasks/pages/projects.html", context=context)
 
 
@@ -124,16 +129,18 @@ def project_detail_view(request, project_id):
     project = Project.objects.get(pk=project_id)
 
     if request.user in project.organization.users.all():
-        context = {'project': project,
-                   'status_choices': STATUS_CHOICES,
-                   'priority_choices': PRIORITY_CHOICES,
-                   }
+        context = {
+            "project": project,
+            "status_choices": STATUS_CHOICES,
+            "priority_choices": PRIORITY_CHOICES,
+        }
         return render(request, "tasks/pages/project_detail.html", context=context)
 
 
 #################
 # Project PUT views
 #################
+
 
 @login_required
 def project_put_status(request, project_id):
@@ -171,6 +178,7 @@ def project_put_member(request, project_id):
 
             return HttpResponse(status=204)
 
+
 #################
 # Tasks PUT views
 #################
@@ -201,13 +209,10 @@ def task_put_assignment(request, task_id):
     task = Task.objects.get(pk=task_id)
     if request.method == "PUT":
         data = json.loads(request.body)
-        if data["assignment"] != 'None':
+        if data["assignment"] != "None":
             member = User.objects.get_by_natural_key(data["assignment"])
             task.assignment = member
         else:
             task.assignment = None
         task.save()
         return HttpResponse(status=204)
-
-
-

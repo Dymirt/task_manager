@@ -7,13 +7,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tasks', '0003_alter_task_assignment_alter_task_deadline_and_more'),
+        ("tasks", "0003_alter_task_assignment_alter_task_deadline_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='members',
-            field=models.ManyToManyField(blank=True, null=True, related_name='project_members', to=settings.AUTH_USER_MODEL),
+            model_name="project",
+            name="members",
+            field=models.ManyToManyField(
+                blank=True,
+                null=True,
+                related_name="project_members",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
