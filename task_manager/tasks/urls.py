@@ -21,8 +21,10 @@ urlpatterns = [
     path("project/<int:project_id>/status/put", views.project_put_status),
     path("project/<int:project_id>/priority/put", views.project_put_priority),
     path("project/<int:project_id>/member/put", views.project_put_member),
+    path("project/<int:project_id>/add-project-task", views.add_project_task, name='add_project_task'),
     # Tasks PUT
     path("task/<int:task_id>/status/put", views.task_put_status),
     path("task/<int:task_id>/priority/put", views.task_put_priority),
     path("task/<int:task_id>/assignment/put", views.task_put_assignment),
+    path("task/<int:task_id>/remove", views.task_remove),
 ]

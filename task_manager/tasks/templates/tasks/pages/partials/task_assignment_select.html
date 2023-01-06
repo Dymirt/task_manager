@@ -1,14 +1,17 @@
-<select onchange='task_put_assignment({{ task.id }}, this.value)'>
-    {% if not task.assignment %}
-        <option value="None" selected>None</option>
-    {% else %}
-        <option value="None">None</option>
-    {% endif %}
-        {% for member in project.members.all %}
+<div class="input-group input-group-outline my-3">
+	<select class="form-control select" onchange='task_put_assignment({{ task.id }}, this.value)'>
+		{% if not task.assignment %}
+		<option value="None" selected>None</option>
+		{% else %}
+		<option value="None">None</option>
+		{% endif %}
+
+		{% for member in project.members.all %}
             {% if task.assignment == member %}
-                <option value="{{ member }}" selected>{{ member }}</option>
+            <option value="{{ member }}" selected>{{ member }}</option>
             {% else %}
-                <option value="{{ member }}">{{ member }}</option>
+            <option value="{{ member }}">{{ member }}</option>
             {% endif %}
-        {% endfor %}
-</select>
+		{% endfor %}
+	</select>
+</div>

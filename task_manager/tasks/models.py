@@ -89,6 +89,9 @@ class Task(models.Model):
     def __str__(self):
         return f"{self.priority} - {self.title}"
 
+    class Meta:
+        ordering = ['deadline']
+
 
 class DayTask(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="day_tasks")

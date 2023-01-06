@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Project, Task, STATUS_CHOICES, PRIORITY_CHOICES
 from django.db import IntegrityError
 import json
-
+from .forms import TaskForm
 
 # Create your views here.
 from django.urls import reverse
@@ -40,7 +40,6 @@ def logout_view(request):
 
 
 def register_view(request):
-
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
@@ -137,6 +136,21 @@ def project_detail_view(request, project_id):
         return render(request, "tasks/pages/project_detail.html", context=context)
 
 
+def add_project_task(request, project_id):
+    if request.method == "POST":
+        task = Task.objects.create(title=request.POST['title'],
+                                   deadline=request.POST['deadline'],
+                                   status=request.POST['status'],
+                                   priority=request.POST['priority'],
+                                   project=Project.objects.get(pk=project_id),
+                                   assignment=User.objects.get_by_natural_key(request.POST['assignment']),
+                                   author=request.user
+                                   )
+        task.save()
+
+    return HttpResponseRedirect(reverse("project", args=[project_id]))
+
+
 #################
 # Project PUT views
 #################
@@ -215,4 +229,12 @@ def task_put_assignment(request, task_id):
         else:
             task.assignment = None
         task.save()
+        return HttpResponse(status=204)
+
+
+@login_required
+def task_remove(request, task_id):
+    task = Task.objects.get(pk=task_id)
+    if request.method == "DELETE":
+        task.delete()
         return HttpResponse(status=204)

@@ -54,10 +54,42 @@ function task_put_assignment(task_id, member){
     })
 }
 
+function task_delete(task_id){
+    fetch(`/task/${task_id}/remove`, {
+      method: 'DELETE',
+      headers: { "X-CSRFToken": getCookie('csrftoken') }
+    });
+
+    document.getElementById(`task-${task_id}` ).style.display = "none";
+
+}
+
 function handleChange(project_id, user) {
      fetch(`/project/${project_id}/member/put`, {
       method: 'PUT',
       body: JSON.stringify({member: user}),
       headers: { "X-CSRFToken": getCookie('csrftoken') }
-    })
+    });
+
+
+}
+
+function openForm() {
+  document.getElementById("form-container").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("form-container").style.display = "none";
+}
+
+function taskAction(task_id ) {
+  document.getElementById(`${task_id}-task-actions` ).style.display = "table-cell";
+  document.getElementById(`${task_id}-task-actions-trigger` ).style.display = "none";
+
+}
+
+function taskActionHide(task_id ) {
+  document.getElementById(`${task_id}-task-actions` ).style.display = "none";
+  document.getElementById(`${task_id}-task-actions-trigger` ).style.display = "table-cell";
+
 }
