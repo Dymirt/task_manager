@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 
 ON_HOLD = "OH"
@@ -21,11 +21,12 @@ PRIORITY_CHOICES = [
 ]
 
 
-class User(AbstractUser):
+class Member(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='member')
     organization = models.ForeignKey(
         "Organization",
         on_delete=models.CASCADE,
-        related_name="users",
+        related_name="members",
         null=True,
         blank=True,
     )
@@ -40,9 +41,9 @@ class Project(models.Model):
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED
     )
-    members = models.ManyToManyField("User", related_name="project_members", blank=True)
+    members = models.ManyToManyField("Member", related_name="project_members", blank=True)
     author = models.ForeignKey(
-        "User", on_delete=models.CASCADE, related_name="project_authored"
+        "Member", on_delete=models.CASCADE, related_name="project_authored"
     )
     organization = models.ForeignKey(
         "Organization",
@@ -76,14 +77,14 @@ class Task(models.Model):
         "Project", on_delete=models.CASCADE, related_name="project_tasks"
     )
     assignment = models.ForeignKey(
-        "User",
+        "Member",
         on_delete=models.CASCADE,
         related_name="tasks_assignments",
         blank=True,
         null=True,
     )
     author = models.ForeignKey(
-        "User", on_delete=models.CASCADE, related_name="tasks_authored"
+        "Member", on_delete=models.CASCADE, related_name="tasks_authored"
     )
 
     def __str__(self):
@@ -94,7 +95,7 @@ class Task(models.Model):
 
 
 class DayTask(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="day_tasks")
+    user = models.ForeignKey("Member", on_delete=models.CASCADE, related_name="day_tasks")
     title = models.CharField(max_length=64)
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED
@@ -111,6 +112,8 @@ class DayTask(models.Model):
 
 class Organization(models.Model):
     title = models.CharField(max_length=64)
+
+    password = models.CharField(max_length=32, null=True)
 
     def __str__(self):
         return self.title

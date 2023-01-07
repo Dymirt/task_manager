@@ -3,10 +3,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Project, Task, STATUS_CHOICES, PRIORITY_CHOICES
+from .models import User, Project, Task, Organization, STATUS_CHOICES, PRIORITY_CHOICES
 from django.db import IntegrityError
 import json
-from .forms import TaskForm
+from .forms import OrganizationLoginForm
 
 # Create your views here.
 from django.urls import reverse
@@ -74,7 +74,32 @@ def index(request):
 
 @login_required
 def profile_view(request):
-    return render(request, "tasks/pages/profile.html")
+
+    form = OrganizationLoginForm()
+    context = {
+        "form": form,
+        "status_choices": STATUS_CHOICES,
+        "priority_choices": PRIORITY_CHOICES,
+    }
+
+    if request.method == 'POST':
+        form = OrganizationLoginForm(request.POST)
+        if form.is_valid():
+            try:
+                organization = Organization.objects.get(title=form.cleaned_data.get('title'))
+            except Organization.DoesNotExist:
+                context['organization_form_message'] = "Invalid username and/or password."
+                return render(request, "tasks/pages/profile.html", context=context)
+            if organization.password == form.cleaned_data.get('password'):
+                member = request.user.member
+                member.organization = organization
+                member.save()
+            else:
+                return render(request, "tasks/pages/profile.html", context=context)
+
+
+
+    return render(request, "tasks/pages/profile.html", context=context)
 
 
 def dashboard_view(request):
@@ -238,3 +263,8 @@ def task_remove(request, task_id):
     if request.method == "DELETE":
         task.delete()
         return HttpResponse(status=204)
+
+
+#################
+# Tasks PUT views
+#################
