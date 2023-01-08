@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
@@ -111,8 +111,8 @@ def billing_view(request):
     return render(request, "tasks/pages/billing.html")
 
 
-def icons_view(request):
-    return render(request, "tasks/pages/icons.html")
+def notification_view(request):
+    return render(request, "tasks/pages/notifications.html")
 
 
 def map_view(request):
@@ -160,6 +160,7 @@ def project_detail_view(request, project_id):
             "priority_choices": PRIORITY_CHOICES,
         }
         return render(request, "tasks/pages/project_detail.html", context=context)
+    return HttpResponseForbidden()
 
 
 def add_project_task(request, project_id):
