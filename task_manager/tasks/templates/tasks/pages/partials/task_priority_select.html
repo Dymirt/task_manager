@@ -1,12 +1,16 @@
 <div class="input-group input-group-outline my-3">
-    <select class="form-control select" onchange='task_put_priority({{ task.id }}, this.value)'>
+    <select class="form-control select"
+            onchange='task_put_priority({{ task.id }}, this.value)'>
         {% for value, priority in priority_choices %}
             {% if task.priority == value %}
-                <option value="{{ value }}" selected>{{ priority }}</option>
+                <option value="{{ value }}" selected>
+                    {{ priority }}
+                </option>
             {% else %}
-                <option value="{{ value }}">{{ priority }}</option>
+                <option value="{{ value }}">
+                    {{ priority }}
+                </option>
             {% endif %}
         {% endfor %}
-
     </select>
 </div>

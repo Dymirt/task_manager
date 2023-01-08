@@ -93,3 +93,9 @@ function taskActionHide(task_id ) {
   document.getElementById(`${task_id}-task-actions-trigger` ).style.display = "table-cell";
 
 }
+
+function navItemActive(nav_id) {
+    document.getElementById(`${nav_id}`).classList.add('active');
+    document.getElementById(`${nav_id}`).classList.add('bg-gradient-primary');
+
+}

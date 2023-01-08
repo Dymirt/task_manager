@@ -57,11 +57,14 @@ class Project(models.Model):
         return self.title
 
     def completion(self):
-        return round(
-            self.project_tasks.filter(status=COMPLETED).count()
-            / self.project_tasks.all().count()
-            * 100
-        )
+        try:
+            return round(
+                self.project_tasks.filter(status=COMPLETED).count()
+                / self.project_tasks.all().count()
+                * 100
+            )
+        except ZeroDivisionError:
+            return 0
 
 
 class Task(models.Model):
@@ -112,7 +115,7 @@ class DayTask(models.Model):
 
 class Organization(models.Model):
     title = models.CharField(max_length=64)
-
+    login = models.CharField(max_length=64, null=True)
     password = models.CharField(max_length=32, null=True)
 
     def __str__(self):

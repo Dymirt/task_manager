@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Project, Task, Organization, STATUS_CHOICES, PRIORITY_CHOICES
+from .models import User, Member,  Project, Task, Organization, STATUS_CHOICES, PRIORITY_CHOICES
 from django.db import IntegrityError
 import json
 from .forms import OrganizationLoginForm
@@ -56,6 +56,8 @@ def register_view(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+            member = Member.objects.create(user=user)
+            member.save()
         except IntegrityError:
             return render(
                 request,
@@ -73,10 +75,12 @@ def index(request):
 
 
 @login_required
-def profile_view(request):
+def profile_view(request, username):
+    profile_user = User.objects.get_by_natural_key(username)
 
     form = OrganizationLoginForm()
     context = {
+        'profile_user': profile_user,
         "form": form,
         "status_choices": STATUS_CHOICES,
         "priority_choices": PRIORITY_CHOICES,
@@ -86,18 +90,15 @@ def profile_view(request):
         form = OrganizationLoginForm(request.POST)
         if form.is_valid():
             try:
-                organization = Organization.objects.get(title=form.cleaned_data.get('title'))
+                organization = Organization.objects.get(login=form.cleaned_data.get('login'))
             except Organization.DoesNotExist:
                 context['organization_form_message'] = "Invalid username and/or password."
                 return render(request, "tasks/pages/profile.html", context=context)
+
             if organization.password == form.cleaned_data.get('password'):
                 member = request.user.member
                 member.organization = organization
                 member.save()
-            else:
-                return render(request, "tasks/pages/profile.html", context=context)
-
-
 
     return render(request, "tasks/pages/profile.html", context=context)
 
@@ -137,7 +138,7 @@ def typography_view(request):
 @login_required
 def projects_view(request):
     try:
-        projects = request.user.organization.projects.all()
+        projects = request.user.member.organization.projects.all()
     except AttributeError as e:
         projects = []
     context = {
@@ -152,7 +153,7 @@ def projects_view(request):
 def project_detail_view(request, project_id):
     project = Project.objects.get(pk=project_id)
 
-    if request.user in project.organization.users.all():
+    if request.user.member in project.organization.members.all():
         context = {
             "project": project,
             "status_choices": STATUS_CHOICES,
@@ -163,13 +164,14 @@ def project_detail_view(request, project_id):
 
 def add_project_task(request, project_id):
     if request.method == "POST":
+        member = Member.objects.get(user=User.objects.get_by_natural_key(request.POST['assignment']))
         task = Task.objects.create(title=request.POST['title'],
                                    deadline=request.POST['deadline'],
                                    status=request.POST['status'],
                                    priority=request.POST['priority'],
                                    project=Project.objects.get(pk=project_id),
-                                   assignment=User.objects.get_by_natural_key(request.POST['assignment']),
-                                   author=request.user
+                                   assignment=member,
+                                   author=request.user.member
                                    )
         task.save()
 
@@ -184,7 +186,7 @@ def add_project_task(request, project_id):
 @login_required
 def project_put_status(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.user == project.author:
+    if request.user == project.author.user:
         if request.method == "PUT":
             data = json.loads(request.body)
             project.status = data["status"]
@@ -195,7 +197,7 @@ def project_put_status(request, project_id):
 @login_required
 def project_put_priority(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.user == project.author:
+    if request.user == project.author.user:
         if request.method == "PUT":
             data = json.loads(request.body)
             project.priority = data["priority"]
@@ -206,12 +208,17 @@ def project_put_priority(request, project_id):
 @login_required
 def project_put_member(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.user == project.author:
+    if request.user == project.author.user:
         if request.method == "PUT":
             data = json.loads(request.body)
-            member = User.objects.get_by_natural_key(data["member"])
+            member = Member.objects.get(user=User.objects.get_by_natural_key(data["member"]))
             if member in project.members.all():
+                member_project_tasks = Task.objects.filter(project=project, assignment=member)
+                for tasks in member_project_tasks:
+                    tasks.assignment = None
+                    tasks.save()
                 project.members.remove(member)
+
             else:
                 project.members.add(member)
 
@@ -249,7 +256,7 @@ def task_put_assignment(request, task_id):
     if request.method == "PUT":
         data = json.loads(request.body)
         if data["assignment"] != "None":
-            member = User.objects.get_by_natural_key(data["assignment"])
+            member = Member.objects.get(user=User.objects.get_by_natural_key(data["assignment"]))
             task.assignment = member
         else:
             task.assignment = None
@@ -260,7 +267,7 @@ def task_put_assignment(request, task_id):
 @login_required
 def task_remove(request, task_id):
     task = Task.objects.get(pk=task_id)
-    if request.method == "DELETE":
+    if request.method == "DELETE" and request.user.member in task.project.members.all():
         task.delete()
         return HttpResponse(status=204)
 

@@ -5,10 +5,10 @@ from .models import Organization
 class OrganizationLoginForm(ModelForm):
     class Meta:
         model = Organization
-        fields = ['title', 'password']
+        fields = ['login', 'password']
         widgets = {
-            'title': TextInput(attrs={
-                'name': 'Title',
+            'login': TextInput(attrs={
+                'name': 'Login',
                 'class': 'form-control mb-3',
             }),
             'password': PasswordInput(attrs={
