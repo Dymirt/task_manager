@@ -268,9 +268,11 @@ def task_put_assignment(request, task_id):
 @login_required
 def task_remove(request, task_id):
     task = Task.objects.get(pk=task_id)
-    if request.method == "DELETE" and request.user.member in task.project.members.all():
-        task.delete()
-        return HttpResponse(status=204)
+    if request.method == "DELETE":
+        print(task_id)
+        if request.user.member in task.project.members.all():
+            task.delete()
+            return HttpResponse(status=204)
 
 
 #################

@@ -77,3 +77,25 @@ background-repeat: no-repeat !important;
 background-position: right 0 center !important;
 background-size: 16px 12px !important;
 }
+
+.scroll {
+    overflow:auto;
+}
+
+/* width */
+.scroll::-webkit-scrollbar {
+  width: 10px;
+  height:5px;
+}
+
+/* Track */
+.scroll::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 5px;
+}
+
+/* Handle */
+.scroll::-webkit-scrollbar-thumb {
+  background: gray;
+  border-radius: 10px;
+}
