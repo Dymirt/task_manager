@@ -95,12 +95,13 @@
                                             </div>
                                         </form>
                                     {% else %}
-                                        <h5>{{ user.member.organization }}</h5>
+                                        <h5>{{ profile_user.member.organization.title }}</h5>
                                     {% endif %}
                                 {% else %}
-                                    {% if not user.member.organization %}
-                                        <h5>{{ profile_user.member.organization }}</h5>
+                                    {% if profile_user.member.organization %}
+                                        <h5>{{ profile_user.member.organization.title }}</h5>
                                     {% else %}
+                                        <h5>Without organization</h5>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -213,7 +214,7 @@
                                 <ul class="list-group">
                                     <li class="list-group-item border-0 ps-0 pt-0 text-sm">
                                         <strong class="text-dark">Full Name:</strong>
-                                        &nbsp; Alec M. Thompson
+                                        &nbsp; {{ profile_user.get_full_name }}
                                     </li>
                                     <li class="list-group-item border-0 ps-0 text-sm">
                                         <strong class="text-dark">Mobile:</strong> &nbsp;
@@ -221,7 +222,7 @@
                                     </li>
                                     <li class="list-group-item border-0 ps-0 text-sm">
                                         <strong class="text-dark">Email:</strong> &nbsp;
-                                        alecthompson@mail.com
+                                         {{ profile_user.email }}
                                     </li>
                                     <li class="list-group-item border-0 ps-0 text-sm">
                                         <strong class="text-dark">Location:</strong> &nbsp;

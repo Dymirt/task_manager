@@ -77,11 +77,11 @@
                                         <td>
                                             <div class="avatar-group mt-2">
                                                 {% for member in project.members.all %}
-                                                    <a href="javascript:;"
+                                                    <a href="{% url  'profile' member.user.username %}"
                                                        class="avatar avatar-xs rounded-circle"
                                                        data-bs-toggle="tooltip"
                                                        data-bs-placement="bottom"
-                                                       title="{{ member.user }}">
+                                                       title="{{ member.user.username }}">
                                                         <img src="../assets/img/team-1.jpg" alt="team1">
                                                     </a>
                                                 {% endfor %}

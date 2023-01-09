@@ -35,10 +35,12 @@
                             <div class="col-6 d-flex align-items-center">
                                 <h6 class="text-white text-capitalize ps-3">Projects tasks</h6>
                             </div>
+                            {% if user.member in project.members.all %}
                             <div class="col-6 text-end">
                                 <a class="btn bg-gradient-dark" onclick="openForm()">
                                     <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Add New task</a>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -98,6 +100,7 @@
                                                 {% endif %}
                                             {% endif %}
                                         </td>
+                                        {% if user.member in project.members.all %}
                                         <td id='{{ task.id }}-task-actions' class='task-action align-middle'>
                                             <button class='ibtn' style='color:red' onclick='task_delete({{ task.id }})'>
                                                 <i class="bi bi-trash"></i>
@@ -112,6 +115,7 @@
                                                 <i class="fa fa-ellipsis-v text-xs"></i>
                                             </button>
                                         </td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>
