@@ -14,7 +14,6 @@ urlpatterns = [
     path("tables/", views.tables_view, name="tables"),
     path("template/", views.template_view, name="template"),
     path("typography/", views.typography_view, name="typography"),
-    path("virtual/", views.virtual_view, name="virtual"),
     path("projects/", views.projects_view, name="projects"),
     path("project/<int:project_id>", views.project_detail_view, name="project"),
     # Project PUT

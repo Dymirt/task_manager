@@ -127,10 +127,6 @@ def template_view(request):
     return render(request, "tasks/pages/template.html")
 
 
-def virtual_view(request):
-    return render(request, "tasks/pages/virtual-reality.html")
-
-
 def typography_view(request):
     return render(request, "tasks/pages/typography.html")
 
