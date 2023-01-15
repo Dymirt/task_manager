@@ -67,28 +67,27 @@
                                             <td style='max-width: 415px;'>
                                                 <div class="d-flex px-2 scroll">
                                                     <div class="my-auto">
-                                                        <h6 class="mb-0 text-sm">{{ milestone.title }}</h6>
+                                                        <a href="{% url 'milestone_tasks' milestone.id %}">
+                                                            <h6 class="mb-0 text-sm">{{ milestone.title }}</h6>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
                                             <!-- END Title -->
-
                                             <!-- Timestamp -->
                                             <td>
                                                 <span class="text-sm font-weight-bold">{{ milestone.timestamp.date }}</span>
                                             </td>
                                             <!-- END Timestamp -->
-
                                             <!-- Priority -->
                                             <td>
                                                 {% if user == project.author.user %}
-                                                    {% include 'tasks/pages/partials/task_priority_select.html' %}
+                                                    {% include 'tasks/pages/partials/milestone_priority_select.html' %}
                                                 {% else %}
                                                     <p class="text-sm font-weight-bold mb-0">{{ milestone.get_priority_display }}</p>
                                                 {% endif %}
                                             </td>
                                             <!-- END Priority -->
-
                                             <!-- Status -->
                                             <td>
                                                 {% if user == milestone.assignment.user %}
@@ -98,17 +97,15 @@
                                                 {% endif %}
                                             </td>
                                             <!-- END Status -->
-
                                             <!-- Deadline -->
                                             <td>
                                                 <span class="text-sm font-weight-bold">{{ milestone.deadline }}</span>
                                             </td>
                                             <!-- END Deadline -->
-
                                             <!-- Assignment -->
                                             <td>
                                                 {% if user.member in project.members.all %}
-                                                    {% include 'tasks/pages/partials/task_assignment_select.html' %}
+                                                    {% include 'tasks/pages/partials/milestone_assignment_select.html' %}
                                                 {% else %}
                                                     {% if milestone.assignment %}
                                                         <p class="text-sm font-weight-bold mb-0">{{ milestone.assignment.user }}</p>
@@ -118,18 +115,21 @@
                                                 {% endif %}
                                             </td>
                                             <!--END Assignment -->
-
                                             <!-- Actions -->
                                             {% if user.member in project.members.all %}
-                                                <td id='{{ milestone.id }}-milestone-actions' class='milestone-action align-middle'>
-                                                    <button class='ibtn' style='color:red' onclick='milestone_delete({{ milestone.id }})'>
+                                                <td id='{{ milestone.id }}-milestone-actions'
+                                                    class='milestone-action align-middle'>
+                                                    <button class='ibtn'
+                                                            style='color:red'
+                                                            onclick='milestone_delete({{ milestone.id }})'>
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                     <button class='ibtn' onclick='MilestoneActionHide({{ milestone.id }})'>
                                                         <i class="bi bi-x-square"></i>
                                                     </button>
                                                 </td>
-                                                <td class="align-middle" id='{{ milestone.id }}-milestone-actions-trigger'>
+                                                <td class="align-middle"
+                                                    id='{{ milestone.id }}-milestone-actions-trigger'>
                                                     <button class="btn btn-link text-secondary mb-0"
                                                             onclick='milestoneAction({{ milestone.id }})'>
                                                         <i class="fa fa-ellipsis-v text-xs"></i>

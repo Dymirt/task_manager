@@ -96,17 +96,39 @@ class Milestone(models.Model):
     def __str__(self):
         return f"{self.priority} - {self.title}"
 
+    def completion(self):
+        try:
+            return round(
+                self.milestone_tasks.filter(status=COMPLETED).count()
+                / self.milestone_tasks.all().count()
+                * 100
+            )
+        except ZeroDivisionError:
+            return 0
+
     class Meta:
         ordering = ['deadline']
 
 
-class DayTask(models.Model):
-    user = models.ForeignKey("Member", on_delete=models.CASCADE, related_name="day_tasks")
+class Task(models.Model):
     title = models.CharField(max_length=64)
-    status = models.CharField(
-        max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED
-    )
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=NOT_STARTED)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=LOW)
+
+    class Meta:
+        abstract = True
+
+
+class MilestoneTask(models.Model):
+    title = models.CharField(max_length=64)
+    milestone = models.ForeignKey(
+        "Milestone", on_delete=models.CASCADE, related_name="tasks"
+    )
+    complete = models.BooleanField(default=False)
+
+
+class DayTask(Task):
+    user = models.ForeignKey("Member", on_delete=models.CASCADE, related_name="day_tasks")
     parent = models.ForeignKey(
         "DayTask",
         on_delete=models.CASCADE,

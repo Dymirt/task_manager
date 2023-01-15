@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllow
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Member,  Project, Milestone, Organization, STATUS_CHOICES, PRIORITY_CHOICES
+from .models import User, Member,  Project, Milestone,MilestoneTask, Organization, STATUS_CHOICES, PRIORITY_CHOICES
 from django.db import IntegrityError
 import json
 from .forms import OrganizationLoginForm
@@ -125,14 +125,10 @@ def typography_view(request):
 
 @login_required
 def projects_view(request):
-    try:
-        projects = request.user.member.organization.projects.all()
-    except AttributeError as e:
-        projects = []
     context = {
-        "projects": projects,
         "status_choices": STATUS_CHOICES,
         "priority_choices": PRIORITY_CHOICES,
+        'organization': request.user.member.organization
     }
     return render(request, "tasks/pages/projects.html", context=context)
 
@@ -265,3 +261,24 @@ def milestone_remove(request, milestone_id):
 #################
 # milestones PUT views
 #################
+
+def milestone_tasks(request, milestone_id):
+    milestone = Milestone.objects.get(pk=milestone_id)
+
+    if request.user.member in milestone.project.organization.members.all():
+        context = {
+            "milestone": milestone,
+            "status_choices": STATUS_CHOICES,
+            "priority_choices": PRIORITY_CHOICES,
+        }
+        return render(request, "tasks/pages/milestone_detail.html", context=context)
+    return HttpResponseForbidden()
+
+
+def milestone_tasks_add(request, milestone_id):
+    if request.method == "POST":
+        milestone = Milestone.objects.get(pk=milestone_id)
+        task = MilestoneTask.objects.create(title=request.POST['title'], milestone=milestone)
+        task.save()
+
+    return HttpResponseRedirect(reverse("milestone_tasks", args=[milestone_id]))
