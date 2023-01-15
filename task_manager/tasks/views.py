@@ -23,7 +23,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("dashboard"))
         else:
             return render(
                 request,
@@ -65,13 +65,9 @@ def register_view(request):
                 {"message": "Username already taken."},
             )
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("dashboard"))
     else:
         return render(request, "tasks/pages/sign-up.html")
-
-
-def index(request):
-    return render(request, "tasks/index.html")
 
 
 @login_required
@@ -113,10 +109,6 @@ def billing_view(request):
 
 def notification_view(request):
     return render(request, "tasks/pages/notifications.html")
-
-
-def map_view(request):
-    return render(request, "tasks/pages/map.html")
 
 
 def tables_view(request):
