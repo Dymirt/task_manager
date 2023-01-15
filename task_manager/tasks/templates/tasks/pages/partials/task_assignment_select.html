@@ -1,7 +1,7 @@
 <div class="input-group input-group-outline my-3">
     <select class="form-control select"
-            onchange='task_put_assignment({{ task.id }}, this.value)'>
-        {% if not task.assignment %}
+            onchange='milestone_put_assignment({{ milestone.id }}, this.value)'>
+        {% if not milestone.assignment %}
             <option value="None" selected>
                 None
             </option>
@@ -11,7 +11,7 @@
             </option>
         {% endif %}
         {% for member in project.members.all %}
-            {% if task.assignment.user == member.user %}
+            {% if milestone.assignment.user == member.user %}
                 <option value="{{ member.user }}" selected>
                     {{ member.user }}
                 </option>

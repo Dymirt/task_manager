@@ -1,8 +1,8 @@
 <div class="input-group input-group-outline my-3">
     <select class="form-control select"
-            onchange='task_put_status({{ task.id }}, this.value)'>
+            onchange='milestone_put_status({{ milestone.id }}, this.value)'>
         {% for key, status in status_choices %}
-            {% if task.status == key %}
+            {% if milestone.status == key %}
                 <option value="{{ key }}" selected>
                     {{ status }}
                 </option>

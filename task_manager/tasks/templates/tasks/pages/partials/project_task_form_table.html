@@ -1,6 +1,6 @@
 <form id='form-container'
       style='margin-bottom: 2rem'
-      action="{% url 'add_project_task' project.id %}"
+      action="{% url 'add_project_milestone' project.id %}"
       method="post">
     {% csrf_token %}
     <table class="table align-items-center justify-content-center mb-0">
@@ -18,7 +18,7 @@
             <tr>
                 <td>
                     <div class="input-group input-group-outline my-3">
-                        <label class="form-label">Task-title</label>
+                        <label class="form-label">Milestone-title</label>
                         <input type="text" class="form-control" name="title" required>
                     </div>
                 </td>

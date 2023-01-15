@@ -7,17 +7,17 @@ NOT_STARTED = "NS"
 IN_PROGRESS = "IP"
 COMPLETED = "C"
 STATUS_CHOICES = [
-    (ON_HOLD, "Wstrzymane"),
-    (NOT_STARTED, "Nie rozpoczęte"),
-    (IN_PROGRESS, "W trakcie"),
-    (COMPLETED, "Zakończone"),
+    (ON_HOLD, "ON HOLD"),
+    (NOT_STARTED, "NOT STARTED"),
+    (IN_PROGRESS, "IN PROGRESS"),
+    (COMPLETED, "COMPLETE"),
 ]
 
 LOW = "L"
 HIGH = "H"
 PRIORITY_CHOICES = [
-    (LOW, "Niski"),
-    (HIGH, "Wysoki"),
+    (LOW, "LOW"),
+    (HIGH, "HIGH"),
 ]
 
 
@@ -62,15 +62,15 @@ class Project(models.Model):
     def completion(self):
         try:
             return round(
-                self.project_tasks.filter(status=COMPLETED).count()
-                / self.project_tasks.all().count()
+                self.project_milestones.filter(status=COMPLETED).count()
+                / self.project_milestones.all().count()
                 * 100
             )
         except ZeroDivisionError:
             return 0
 
 
-class Task(models.Model):
+class Milestone(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=64)
     description = models.TextField(null=True, blank=True)
@@ -80,17 +80,17 @@ class Task(models.Model):
     )
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=LOW)
     project = models.ForeignKey(
-        "Project", on_delete=models.CASCADE, related_name="project_tasks"
+        "Project", on_delete=models.CASCADE, related_name="project_milestones"
     )
     assignment = models.ForeignKey(
         "Member",
         on_delete=models.CASCADE,
-        related_name="tasks_assignments",
+        related_name="milestones_assignments",
         blank=True,
         null=True,
     )
     author = models.ForeignKey(
-        "Member", on_delete=models.CASCADE, related_name="tasks_authored"
+        "Member", on_delete=models.CASCADE, related_name="milestones_authored"
     )
 
     def __str__(self):

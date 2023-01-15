@@ -61,62 +61,82 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for task in project.project_tasks.all %}
-                                        <tr id="task-{{ task.id }}">
+                                    {% for milestone in project.project_milestones.all %}
+                                        <tr id="milestone-{{ milestone.id }}">
+                                            <!-- Title -->
                                             <td style='max-width: 415px;'>
                                                 <div class="d-flex px-2 scroll">
                                                     <div class="my-auto">
-                                                        <h6 class="mb-0 text-sm">{{ task.title }}</h6>
+                                                        <h6 class="mb-0 text-sm">{{ milestone.title }}</h6>
                                                     </div>
                                                 </div>
                                             </td>
+                                            <!-- END Title -->
+
+                                            <!-- Timestamp -->
                                             <td>
-                                                <span class="text-sm font-weight-bold">{{ task.timestamp.date }}</span>
+                                                <span class="text-sm font-weight-bold">{{ milestone.timestamp.date }}</span>
                                             </td>
+                                            <!-- END Timestamp -->
+
+                                            <!-- Priority -->
                                             <td>
                                                 {% if user == project.author.user %}
                                                     {% include 'tasks/pages/partials/task_priority_select.html' %}
                                                 {% else %}
-                                                    <p class="text-sm font-weight-bold mb-0">{{ task.get_priority_display }}</p>
+                                                    <p class="text-sm font-weight-bold mb-0">{{ milestone.get_priority_display }}</p>
                                                 {% endif %}
                                             </td>
+                                            <!-- END Priority -->
+
+                                            <!-- Status -->
                                             <td>
-                                                {% if user == task.assignment.user %}
-                                                    {% include 'tasks/pages/partials/task_status_select.html' %}
+                                                {% if user == milestone.assignment.user %}
+                                                    {% include 'tasks/pages/partials/milestone_status_select.html' %}
                                                 {% else %}
-                                                    <p class="text-sm font-weight-bold mb-0">{{ task.get_status_display }}</p>
+                                                    <p class="text-sm font-weight-bold mb-0">{{ milestone.get_status_display }}</p>
                                                 {% endif %}
                                             </td>
+                                            <!-- END Status -->
+
+                                            <!-- Deadline -->
                                             <td>
-                                                <span class="text-sm font-weight-bold">{{ task.deadline }}</span>
+                                                <span class="text-sm font-weight-bold">{{ milestone.deadline }}</span>
                                             </td>
+                                            <!-- END Deadline -->
+
+                                            <!-- Assignment -->
                                             <td>
                                                 {% if user.member in project.members.all %}
                                                     {% include 'tasks/pages/partials/task_assignment_select.html' %}
                                                 {% else %}
-                                                    {% if task.assignment %}
-                                                        <p class="text-sm font-weight-bold mb-0">{{ task.assignment.user }}</p>
+                                                    {% if milestone.assignment %}
+                                                        <p class="text-sm font-weight-bold mb-0">{{ milestone.assignment.user }}</p>
                                                     {% else %}
                                                         <p class="text-sm font-weight-bold mb-0">None</p>
                                                     {% endif %}
                                                 {% endif %}
                                             </td>
+                                            <!--END Assignment -->
+
+                                            <!-- Actions -->
                                             {% if user.member in project.members.all %}
-                                                <td id='{{ task.id }}-task-actions' class='task-action align-middle'>
-                                                    <button class='ibtn' style='color:red' onclick='task_delete({{ task.id }})'>
+                                                <td id='{{ milestone.id }}-milestone-actions' class='milestone-action align-middle'>
+                                                    <button class='ibtn' style='color:red' onclick='milestone_delete({{ milestone.id }})'>
                                                         <i class="bi bi-trash"></i>
                                                     </button>
-                                                    <button class='ibtn' onclick='taskActionHide({{ task.id }})'>
+                                                    <button class='ibtn' onclick='MilestoneActionHide({{ milestone.id }})'>
                                                         <i class="bi bi-x-square"></i>
                                                     </button>
                                                 </td>
-                                                <td class="align-middle" id='{{ task.id }}-task-actions-trigger'>
+                                                <td class="align-middle" id='{{ milestone.id }}-milestone-actions-trigger'>
                                                     <button class="btn btn-link text-secondary mb-0"
-                                                            onclick='taskAction({{ task.id }})'>
+                                                            onclick='milestoneAction({{ milestone.id }})'>
                                                         <i class="fa fa-ellipsis-v text-xs"></i>
                                                     </button>
                                                 </td>
                                             {% endif %}
+                                            <!--END Actions -->
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -126,6 +146,7 @@
                 </div>
             </div>
         </div>
+        <!-- Members table -->
         <div class="row">
             <div class="col-3">
                 <div class="card my-4">
@@ -196,5 +217,6 @@
                 </div>
             </div>
         </div>
+        <!-- END Members table -->
     </div>
 {% endblock %}

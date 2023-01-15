@@ -1,8 +1,8 @@
 <div class="input-group input-group-outline my-3">
     <select class="form-control select"
-            onchange='task_put_priority({{ task.id }}, this.value)'>
+            onchange='milestone_put_priority({{ milestone.id }}, this.value)'>
         {% for value, priority in priority_choices %}
-            {% if task.priority == value %}
+            {% if milestone.priority == value %}
                 <option value="{{ value }}" selected>
                     {{ priority }}
                 </option>

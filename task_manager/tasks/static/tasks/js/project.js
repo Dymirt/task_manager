@@ -30,37 +30,37 @@ function project_put_priority(project_id, state){
     })
 }
 
-function task_put_status(task_id, state){
-    fetch(`/task/${task_id}/status/put`, {
+function milestone_put_status(milestone_id, state){
+    fetch(`/milestone/${milestone_id}/status/put`, {
       method: 'PUT',
       body: JSON.stringify({status: state}),
       headers: { "X-CSRFToken": getCookie('csrftoken') }
     })
 }
 
-function task_put_priority(task_id, state){
-    fetch(`/task/${task_id}/priority/put`, {
+function milestone_put_priority(milestone_id, state){
+    fetch(`/milestone/${milestone_id}/priority/put`, {
       method: 'PUT',
       body: JSON.stringify({priority: state}),
       headers: { "X-CSRFToken": getCookie('csrftoken') }
     })
 }
 
-function task_put_assignment(task_id, member){
-    fetch(`/task/${task_id}/assignment/put`, {
+function milestone_put_assignment(milestone_id, member){
+    fetch(`/milestone/${milestone_id}/assignment/put`, {
       method: 'PUT',
       body: JSON.stringify({assignment: member}),
       headers: { "X-CSRFToken": getCookie('csrftoken') }
     })
 }
 
-function task_delete(task_id){
-    fetch(`/task/${task_id}/remove`, {
+function milestone_delete(milestone_id){
+    fetch(`/milestone/${milestone_id}/remove`, {
       method: 'DELETE',
       headers: { "X-CSRFToken": getCookie('csrftoken') }
     });
 
-    document.getElementById(`task-${task_id}` ).style.display = "none";
+    document.getElementById(`milestone-${milestone_id}` ).style.display = "none";
 
 }
 
@@ -82,15 +82,15 @@ function closeForm() {
   document.getElementById("form-container").style.display = "none";
 }
 
-function taskAction(task_id ) {
-  document.getElementById(`${task_id}-task-actions` ).style.display = "table-cell";
-  document.getElementById(`${task_id}-task-actions-trigger` ).style.display = "none";
+function milestoneAction(milestone_id ) {
+  document.getElementById(`${milestone_id}-milestone-actions` ).style.display = "table-cell";
+  document.getElementById(`${milestone_id}-milestone-actions-trigger` ).style.display = "none";
 
 }
 
-function taskActionHide(task_id ) {
-  document.getElementById(`${task_id}-task-actions` ).style.display = "none";
-  document.getElementById(`${task_id}-task-actions-trigger` ).style.display = "table-cell";
+function milestoneActionHide(milestone_id ) {
+  document.getElementById(`${milestone_id}-milestone-actions` ).style.display = "none";
+  document.getElementById(`${milestone_id}-milestone-actions-trigger` ).style.display = "table-cell";
 
 }
 

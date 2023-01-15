@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllow
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Member,  Project, Task, Organization, STATUS_CHOICES, PRIORITY_CHOICES
+from .models import User, Member,  Project, Milestone, Organization, STATUS_CHOICES, PRIORITY_CHOICES
 from django.db import IntegrityError
 import json
 from .forms import OrganizationLoginForm
@@ -151,18 +151,18 @@ def project_detail_view(request, project_id):
     return HttpResponseForbidden()
 
 
-def add_project_task(request, project_id):
+def add_project_milestone(request, project_id):
     if request.method == "POST":
         member = Member.objects.get(user=User.objects.get_by_natural_key(request.POST['assignment']))
-        task = Task.objects.create(title=request.POST['title'],
-                                   deadline=request.POST['deadline'],
-                                   status=request.POST['status'],
-                                   priority=request.POST['priority'],
-                                   project=Project.objects.get(pk=project_id),
-                                   assignment=member,
-                                   author=request.user.member
-                                   )
-        task.save()
+        milestone = Milestone.objects.create(title=request.POST['title'],
+                                        deadline=request.POST['deadline'],
+                                        status=request.POST['status'],
+                                        priority=request.POST['priority'],
+                                        project=Project.objects.get(pk=project_id),
+                                        assignment=member,
+                                        author=request.user.member
+                                        )
+        milestone.save()
 
     return HttpResponseRedirect(reverse("project", args=[project_id]))
 
@@ -202,10 +202,10 @@ def project_put_member(request, project_id):
             data = json.loads(request.body)
             member = Member.objects.get(user=User.objects.get_by_natural_key(data["member"]))
             if member in project.members.all():
-                member_project_tasks = Task.objects.filter(project=project, assignment=member)
-                for tasks in member_project_tasks:
-                    tasks.assignment = None
-                    tasks.save()
+                member_project_milestones = Milestone.objects.filter(project=project, assignment=member)
+                for milestones in member_project_milestones:
+                    milestones.assignment = None
+                    milestones.save()
                 project.members.remove(member)
 
             else:
@@ -215,54 +215,53 @@ def project_put_member(request, project_id):
 
 
 #################
-# Tasks PUT views
+# milestone PUT views
 #################
 
 
 @login_required
-def task_put_status(request, task_id):
-    task = Task.objects.get(pk=task_id)
+def milestone_put_status(request, milestone_id):
+    milestone = Milestone.objects.get(pk=milestone_id)
     if request.method == "PUT":
         data = json.loads(request.body)
-        task.status = data["status"]
-        task.save()
+        milestone.status = data["status"]
+        milestone.save()
         return HttpResponse(status=204)
 
 
 @login_required
-def task_put_priority(request, task_id):
-    task = Task.objects.get(pk=task_id)
+def milestone_put_priority(request, milestone_id):
+    milestone = Milestone.objects.get(pk=milestone_id)
     if request.method == "PUT":
         data = json.loads(request.body)
-        task.priority = data["priority"]
-        task.save()
+        milestone.priority = data["priority"]
+        milestone.save()
         return HttpResponse(status=204)
 
 
 @login_required
-def task_put_assignment(request, task_id):
-    task = Task.objects.get(pk=task_id)
+def milestone_put_assignment(request, milestone_id):
+    milestone = Milestone.objects.get(pk=milestone_id)
     if request.method == "PUT":
         data = json.loads(request.body)
         if data["assignment"] != "None":
             member = Member.objects.get(user=User.objects.get_by_natural_key(data["assignment"]))
-            task.assignment = member
+            milestone.assignment = member
         else:
-            task.assignment = None
-        task.save()
+            milestone.assignment = None
+        milestone.save()
         return HttpResponse(status=204)
 
 
 @login_required
-def task_remove(request, task_id):
-    task = Task.objects.get(pk=task_id)
+def milestone_remove(request, milestone_id):
+    milestone = Milestone.objects.get(pk=milestone_id)
     if request.method == "DELETE":
-        print(task_id)
-        if request.user.member in task.project.members.all():
-            task.delete()
+        if request.user.member in milestone.project.members.all():
+            milestone.delete()
             return HttpResponse(status=204)
 
 
 #################
-# Tasks PUT views
+# milestones PUT views
 #################
