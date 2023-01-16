@@ -25,6 +25,8 @@ urlpatterns = [
     path("milestone/<int:milestone_id>/assignment/put", views.milestone_put_assignment),
     path("milestone/<int:milestone_id>/remove", views.milestone_remove),
     path("milestone/<int:milestone_id>/tasks", views.milestone_tasks, name='milestone_tasks'),
-    path("milestone/<int:milestone_id>/tasks/add", views.milestone_tasks_add, name='milestone_task_add'),
+    path("milestone/<int:milestone_id>/task/add", views.milestone_tasks_add, name='milestone_task_add'),
+    # Task
+    path("milestone/task/<int:task_id>/update", views.milestone_task_update, name='milestone_task_update'),
 
 ]

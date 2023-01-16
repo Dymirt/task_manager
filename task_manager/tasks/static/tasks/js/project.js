@@ -64,13 +64,12 @@ function milestone_delete(milestone_id){
 
 }
 
-function handleChange(project_id, user) {
+function memberProjectAssignmentHandleChange(project_id, user) {
      fetch(`/project/${project_id}/member/put`, {
       method: 'PUT',
       body: JSON.stringify({member: user}),
       headers: { "X-CSRFToken": getCookie('csrftoken') }
     });
-
 
 }
 
@@ -98,4 +97,11 @@ function navItemActive(nav_id) {
     document.getElementById(`${nav_id}`).classList.add('active');
     document.getElementById(`${nav_id}`).classList.add('bg-gradient-primary');
 
+}
+
+function milestoneTaskHandleChange(task_id) {
+     fetch(`/milestone/task/${task_id}/update`, {
+      method: 'PUT',
+      headers: { "X-CSRFToken": getCookie('csrftoken') }
+    }).then(document.location.reload(true));
 }

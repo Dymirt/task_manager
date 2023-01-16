@@ -182,14 +182,14 @@
                                                 {% if organization_member in project.members.all %}
                                                     <input class="form-check-input ms-auto"
                                                            type="checkbox"
-                                                           onchange="handleChange({{ project.id }}, this.value )"
+                                                           onchange="memberProjectAssignmentHandleChange({{ project.id }}, this.value )"
                                                            value="{{ organization_member.user }}"
                                                            name="{{ organization_member.user }}"
                                                            checked>
                                                 {% else %}
                                                     <input class="form-check-input ms-auto"
                                                            type="checkbox"
-                                                           onchange="handleChange({{ project.id }}, this.value )"
+                                                           onchange="memberProjectAssignmentHandleChange({{ project.id }}, this.value )"
                                                            value="{{ organization_member.user }}"
                                                            name="{{ organization_member.user }}">
                                                 {% endif %}

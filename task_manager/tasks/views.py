@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, Http404, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotAllowed, Http404, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
@@ -282,3 +282,19 @@ def milestone_tasks_add(request, milestone_id):
         task.save()
 
     return HttpResponseRedirect(reverse("milestone_tasks", args=[milestone_id]))
+
+
+def milestone_task_update(request, task_id):
+    if request.method == "PUT":
+        task = MilestoneTask.objects.get(pk=task_id)
+        if request.user == task.milestone.assignment.user:
+            if task.complete:
+                task.complete = False
+            else:
+                task.complete = True
+            task.save()
+            return HttpResponse(status=204)
+        else:
+            return HttpResponseForbidden()
+    else:
+        return HttpResponseBadRequest()
